@@ -25,6 +25,12 @@ public class Libro {
 
     }
 
+    public Libro(String titulo, String idioma, Long descargas) {
+        this.titulo = titulo;
+        this.idioma = idioma;
+        this.descargas = descargas;
+    }
+
     public Long getId() {
         return id;
     }
@@ -63,5 +69,16 @@ public class Libro {
 
     public void setAutor(Autor autor) {
         this.autor = autor;
+    }
+
+    @Override
+    public String toString() {
+        return """
+                --------- LIBRO ---------
+                Titulo: %s
+                Autor: %s
+                Idioma: %s
+                Número de descargas: %d
+                """.formatted(this.titulo, this.autor.getNombre(), this.idioma, this.descargas);
     }
 }

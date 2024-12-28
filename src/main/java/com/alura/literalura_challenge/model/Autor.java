@@ -12,6 +12,7 @@ public class Autor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String nombre;
     private Integer year_nacimiento;
     private Integer year_muerte;
@@ -21,6 +22,12 @@ public class Autor {
 
     public Autor() {
 
+    }
+
+    public Autor(String nombre, Integer year_nacimiento, Integer year_muerte) {
+        this.nombre = nombre;
+        this.year_nacimiento = year_nacimiento;
+        this.year_muerte = year_muerte;
     }
 
     public String getNombre() {
