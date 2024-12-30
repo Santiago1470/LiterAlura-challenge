@@ -1,4 +1,4 @@
-# LiterAlura-challenge
+# LiterAlura Challenge
 Este proyecto fue desarrollado para el programa educativo de Oracle ONE en la plataforma de Alura para el curso de Java y Spring Framework G7 - ONE, donde se reforzaron los conocimientos sobre el lenguaje de programación Java, se aprendió sobre lambdas, streams y Spring Framework. El proyecto desarrollado se encarga de realizar solicitudes a una API de libros, manipular datos JSON y, finalmente, filtrar y mostrar los datos solicitados por el usuario.
 ## Descipción del desafío
 ### Funciones disponibles
