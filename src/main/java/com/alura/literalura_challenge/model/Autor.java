@@ -1,7 +1,5 @@
 package com.alura.literalura_challenge.model;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -12,10 +10,13 @@ public class Autor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Id;
+
+    @Column(unique = true)
     private String nombre;
-    private Integer year_nacimiento;
-    private Integer year_muerte;
+
+    private Integer yearNacimiento;
+    private Integer yearMuerte;
 
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Libro> libros;
@@ -24,10 +25,19 @@ public class Autor {
 
     }
 
-    public Autor(String nombre, Integer year_nacimiento, Integer year_muerte) {
+    public Autor(String nombre, Integer yearNacimiento, Integer yearMuerte, List<Libro> libros) {
         this.nombre = nombre;
-        this.year_nacimiento = year_nacimiento;
-        this.year_muerte = year_muerte;
+        this.yearNacimiento = yearNacimiento;
+        this.yearMuerte = yearMuerte;
+        this.libros = libros;
+    }
+
+    public Long getId() {
+        return Id;
+    }
+
+    public void setId(Long id) {
+        Id = id;
     }
 
     public String getNombre() {
@@ -39,19 +49,19 @@ public class Autor {
     }
 
     public Integer getYear_nacimiento() {
-        return year_nacimiento;
+        return yearNacimiento;
     }
 
-    public void setYear_nacimiento(Integer year_nacimiento) {
-        this.year_nacimiento = year_nacimiento;
+    public void setYear_nacimiento(Integer yearNacimiento) {
+        this.yearNacimiento = yearNacimiento;
     }
 
     public Integer getYear_muerte() {
-        return year_muerte;
+        return yearMuerte;
     }
 
-    public void setYear_muerte(Integer year_muerte) {
-        this.year_muerte = year_muerte;
+    public void setYear_muerte(Integer yearMuerte) {
+        this.yearMuerte = yearMuerte;
     }
 
     public List<Libro> getLibros() {
@@ -60,5 +70,27 @@ public class Autor {
 
     public void setLibros(List<Libro> libros) {
         this.libros = libros;
+    }
+
+    public StringBuilder mostrarLibros() {
+        StringBuilder lista = new StringBuilder("[");
+        if (!lista.isEmpty()) {
+            this.libros
+                    .forEach(l -> lista.append(l.getTitulo()).append(", "));
+            lista.delete(lista.length() - 2, lista.length());
+        }
+        lista.append("]");
+
+        return lista;
+    }
+
+    @Override
+    public String toString() {
+        return """
+                Autor: %s
+                Fecha de nacimiento: %s
+                Fecha de fallecimiento: %s
+                Libros: %s
+                """.formatted(nombre, yearNacimiento, yearMuerte, mostrarLibros());
     }
 }

@@ -1,11 +1,6 @@
 package com.alura.literalura_challenge.model;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import org.hibernate.annotations.IdGeneratorType;
-
-import java.util.List;
 
 @Entity
 @Table(name = "libros")
@@ -13,7 +8,9 @@ public class Libro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Id;
+
+    @Column(unique = true)
     private String titulo;
     private String idioma;
     private Long descargas;
@@ -32,11 +29,11 @@ public class Libro {
     }
 
     public Long getId() {
-        return id;
+        return Id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long Id) {
+        this.Id = Id;
     }
 
     public String getTitulo() {

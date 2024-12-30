@@ -4,11 +4,11 @@ import com.alura.literalura_challenge.model.Autor;
 import com.alura.literalura_challenge.model.Datos;
 import com.alura.literalura_challenge.model.DatosLibro;
 import com.alura.literalura_challenge.model.Libro;
-import com.alura.literalura_challenge.repository.LibroRepository;
+import com.alura.literalura_challenge.repository.AutorRepository;
 import com.alura.literalura_challenge.service.ConsumoApi;
 import com.alura.literalura_challenge.service.ConvertidorDatos;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class Principal {
 
@@ -16,10 +16,10 @@ public class Principal {
     private final String URL_BASE = "https://gutendex.com/books";
     private ConsumoApi consumoApi = new ConsumoApi();
     private ConvertidorDatos convertidorDatos = new ConvertidorDatos();
-    private LibroRepository libroRepository;
+    private AutorRepository repository;
 
-    public Principal(LibroRepository libroRepository) {
-        this.libroRepository = libroRepository;
+    public Principal(AutorRepository repository) {
+        this.repository = repository;
     }
 
     public void iniciar() {
@@ -33,6 +33,7 @@ public class Principal {
 
     public String mostrarMenu() {
         return """
+                ------------------------------------------------------
                 Elija una opción a través de su número:
                 1 - Buscar libro por título
                 2 - Listar libros registrados
@@ -54,10 +55,16 @@ public class Principal {
 
                 break;
             case 2:
+                listarLibrosRegistrados();
+
                 break;
             case 3:
+                listarAutoresRegistrados();
+
                 break;
             case 4:
+                listarAutoresVivosByYear();
+
                 break;
             case 5:
                 break;
@@ -75,13 +82,54 @@ public class Principal {
     public void buscarLibro() {
         System.out.println("Ingrese el nombre del libro que desea buscar:");
         String busqueda = scanner.nextLine();
-        DatosLibro datosLibro = getDatosLibro(busqueda);
-        System.out.println(datosLibro);
-        Libro libro = new Libro(datosLibro.titulo(), datosLibro.idiomas().getFirst(), datosLibro.descargas());
-        Autor autor = new Autor(datosLibro.autores().getFirst().nombre(),
-                datosLibro.autores().getFirst().year_nacimiento(), datosLibro.autores().getFirst().year_muerte());
-        libro.setAutor(autor);
-        System.out.println(libro.toString());
-        libroRepository.save(libro);
+
+        try {
+            DatosLibro datosLibro = getDatosLibro(busqueda);
+            Optional<Libro> libroBuscado = repository.buscarLibroPorTitulo(datosLibro.titulo());
+
+            if(libroBuscado.isPresent()) {
+                System.out.println("\nNo se puede registrar el mismo libro más de una vez.\n");
+            } else {
+                Libro libro = new Libro(datosLibro.titulo(), datosLibro.idiomas().getFirst(), datosLibro.descargas());
+                Optional<Autor> autorBuscado = repository.buscarAutorPorNombre(datosLibro.autores().getFirst().nombre());
+
+                Autor autor = autorBuscado.orElseGet(() -> new Autor(
+                        datosLibro.autores().getFirst().nombre(), datosLibro.autores().getFirst().yearNacimiento(),
+                        datosLibro.autores().getFirst().yearMuerte(), new ArrayList<>()));
+                libro.setAutor(autor);
+                autor.getLibros().add(libro);
+                repository.save(autor);
+                System.out.println(libro.toString());
+            }
+        } catch (NoSuchElementException e) {
+            System.out.println("Libro no encontrado\n");
+        }
     }
+
+    public void listarLibrosRegistrados() {
+        List<Libro> librosRegistrados = repository.listarLibrosRegistrados();
+        librosRegistrados.forEach(l -> System.out.println(l.toString()));
+    }
+
+    public void listarAutoresRegistrados() {
+        List<Autor> autoresRegistrados = repository.findAll();
+        autoresRegistrados.forEach(a -> System.out.println(a.toString()));
+    }
+
+    public void listarAutoresVivosByYear() {
+        System.out.println("Ingrese el año vivo de autor(es) que desea buscar:");
+        int year = Integer.parseInt(scanner.nextLine());
+//        List<Autor> autores = repository.findAll();
+//        autores.stream()
+//                .filter(a -> year >= a.getYearNacimiento() && year <= a.getYearMuerte())
+//                .forEach(a -> System.out.println(a.toString()));
+
+        List<Autor> autores = repository.findByYearNacimientoLessThanEqualAndYearMuerteGreaterThanEqualOrYearMuerteIsNull(year, year);
+        autores.forEach(a -> System.out.println(a.toString()));
+    }
+
+    public void listarLibrosPorIdioma() {
+
+    }
+
 }
