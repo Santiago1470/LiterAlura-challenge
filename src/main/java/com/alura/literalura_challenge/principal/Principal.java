@@ -9,6 +9,7 @@ import com.alura.literalura_challenge.service.ConsumoApi;
 import com.alura.literalura_challenge.service.ConvertidorDatos;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Principal {
 
@@ -111,6 +112,7 @@ public class Principal {
     public void listarLibrosRegistrados() {
         List<Libro> librosRegistrados = repository.listarLibrosRegistrados();
         librosRegistrados.forEach(l -> System.out.println(l.toString()));
+        calcularEstadisticasLibros(librosRegistrados);
     }
 
     public void listarAutoresRegistrados() {
@@ -141,7 +143,18 @@ public class Principal {
         String idioma = scanner.nextLine();
         List<Libro> libros = repository.listarLibrosPorIdioma(idioma);
         libros.forEach(l -> System.out.println(l.toString()));
-        System.out.println("Cantidad de libros: " + libros.size());
+        calcularEstadisticasLibros(libros);
+    }
+
+    public void calcularEstadisticasLibros(List<Libro> libros) {
+        DoubleSummaryStatistics estadisticas = libros.stream()
+                .collect(Collectors.summarizingDouble(Libro::getDescargas));
+        System.out.println("-------- Estadísticas de los libros encontrados --------");
+        System.out.println("Cantidad de libros: " + estadisticas.getCount());
+        System.out.println("Cantidad mínima de descargas: " + estadisticas.getMin());
+        System.out.println("Promedio de descargas: " + estadisticas.getAverage());
+        System.out.println("Cantidad máxima de descargas: " + estadisticas.getMax());
+        System.out.println("Cantidad total de descargas: " + estadisticas.getSum());
     }
 
 }
