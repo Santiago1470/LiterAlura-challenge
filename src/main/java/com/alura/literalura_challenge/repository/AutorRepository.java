@@ -20,4 +20,7 @@ public interface AutorRepository extends JpaRepository<Autor, Long> {
     List<Libro> listarLibrosRegistrados();
 
     List<Autor> findByYearNacimientoLessThanEqualAndYearMuerteGreaterThanEqualOrYearMuerteIsNull(int year, int year2);
+
+    @Query("SELECT l FROM Autor a JOIN a.libros l WHERE l.idioma = :idioma")
+    List<Libro> listarLibrosPorIdioma(String idioma);
 }

@@ -67,6 +67,8 @@ public class Principal {
 
                 break;
             case 5:
+                listarLibrosPorIdioma();
+
                 break;
             default:
                 System.out.println("La opción ingresada no existe.");
@@ -129,7 +131,17 @@ public class Principal {
     }
 
     public void listarLibrosPorIdioma() {
-
+        System.out.println("""
+                Ingrese el idioma para buscar los libros:
+                es - español
+                en - inglés
+                fr - fránces
+                pt - portugués
+                """);
+        String idioma = scanner.nextLine();
+        List<Libro> libros = repository.listarLibrosPorIdioma(idioma);
+        libros.forEach(l -> System.out.println(l.toString()));
+        System.out.println("Cantidad de libros: " + libros.size());
     }
 
 }
